@@ -1,0 +1,73 @@
+!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body class=" bg-secondary text-white">
+    <nav class="navbar  bg-dark">
+    <a class="navbar-brand ms-5" href="/">Home</a>
+    <h1>Welcome {{loggedUser.firstname}} {{loggedUser.lastname}}</h1>
+    <a class="btn btn-primary me-5" href="/profile/{{loggedUser.id}}">Your thoughts</a>
+
+    <a class="btn btn-danger me-5" href="/logout">Logout</a>
+    </nav>
+    <div class="container  p-3 align-items-center">
+        <div class=" m-auto bg-dark p-5">
+            <form action="/createThought" method="post">
+                <h1 class="text-warning mb-5">Share a thought:</h1>
+                <div>
+                    <textarea class="form-control" name="description" cols="30" rows="2"
+                        placeholder="Write your thought here!"></textarea>
+                </div>
+                {% with messages = get_flashed_messages(category_filter=["description"]) %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p class="text-danger">{{message}}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="d-flex">
+                <input class="mt-2 btn btn-info ms-auto p-2" type="submit" value="Add Thought">
+                </div>
+            </form>
+        </div>
+    <div class="p-3 mt-2 bg-dark">
+        <div class="m-3">
+            <h1 class="mt-4 text-warning mb-4">Thought Feed :</h1>
+            {% for thought in allThoughts %}
+            <div class="list-group border border-1 m-2 p-3 bg-secondary text-dark">
+                <div class="list-group ">
+                    <div class="mb-2">
+                        <a href="/thought/{{thought.id}}">
+                            <h3 class="text-light"><a href="/profile/{{loggedUser.id}}" class="text-light">{{thought.firstname}} {{thought.lastname}}</a> thought:</h3>
+                    </div>
+                    <div class="list-group-item border border-dark border-3">
+                        {{thought.description}}
+                    </div>
+                    <div class="group-item d-flex mt-4">
+                        <div class="d-flex flex-grow-1">
+                        <h3 class="text-warning">{{thought.likesNr}} Likes</h3>
+                        </div>
+                        {% if thought.id in userLikedThoughts %}
+                        <a class="btn btn-info mx-2" href="/unlike/{{thought.id}}">Unlike</a>                        
+                        {% else  %}
+                        <a class="btn btn-success mx-2" href="/like/{{thought.id}}">Like</a>
+                        {% endif %}
+                        {% if thought.creator_id == loggedUser.id %}
+                        <a class="btn btn-danger mx-2" href="/delete/{{thought.id}}">Delete</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
